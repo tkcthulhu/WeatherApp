@@ -1,0 +1,133 @@
+﻿@page "/fetchdata"
+@inject HttpClient Http
+@using System.Collections.Generic;
+@using System.Linq;
+@using System.Threading.Tasks;
+@using Newtonsoft.Json;
+@using Newtonsoft.Json.Serialization;
+@using Newtonsoft.Json.Converters;
+@using Newtonsoft.Json.Linq;
+@using System.Text.Json;
+
+<PageTitle>Weather forecast</PageTitle>
+
+<h1>Weather forecast</h1>
+
+<p>This component demonstrates fetching data from the server.</p>
+
+@if (forecasts == null)
+{
+    <p><em>Loading...</em></p>
+}
+else
+{
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Date</th>
+                <th>Temp. (C)</th>
+                <th>Temp. (F)</th>
+                <th>Summary</th>
+            </tr>
+        </thead>
+        <tbody>
+            @*@foreach (var forecast in forecasts)
+                {
+                    Console.WriteLine(forecast);
+
+               <tr>
+                    <td>@forecast.Date.ToShortDateString()</td>
+                    <td>@forecast.TemperatureC</td>
+                    <td>@forecast.TemperatureF</td>
+                    <td>@forecast.Summary</td>
+                </tr>
+            }*@
+        </tbody>
+    </table>
+}
+
+@code {
+    private WeatherForecast[]? forecasts;
+
+    private WeatherJSON[]? stuff;
+
+    protected override async Task OnInitializedAsync()
+    {
+        stuff = await Http.GetFromJsonAsync<WeatherJSON[]?>("https://api.openweathermap.org/data/2.5/weather?zip=40502&appid=ef757abcb72ab4e6058f4663f531b267");
+
+        Console.WriteLine(stuff);
+    }
+
+    public class WeatherForecast
+    {
+        public string Date { get; set; }
+
+        public double TemperatureC { get; set; }
+
+        public string? Summary { get; set; }
+
+        public double TemperatureF => 32 + (int)(TemperatureC / 0.5556);
+    }
+
+    public class WeatherJSON
+    {
+        Coord? Coord { get; set; }
+        Weather[]? Weather { get; set; }
+        public string Base { get; set; }
+        Main Main { get; set; }
+        public int Visibility { get; set; }
+        Wind Wind { get; set; }
+        Clouds Clouds { get; set; }
+        public int DT { get; set; }
+        Sys Sys { get; set; }
+        public int Timezon { get; set; }
+        public int ID { get; set; }
+        public string Name { get; set; }
+        public int COD { get; set; }
+    }
+
+    public class Coord
+    {
+        public double Lon { get; set; }
+        public double Lat { get; set; }
+    }
+
+    public class Weather
+    {
+        public int ID { get; set; }
+        public string Condition { get; set; }
+        public string Description { get; set; }
+        public string Icon { get; set; }
+    }
+
+    public class Main
+    {
+        public double Temp { get; set; }
+        public double FeelsLike { get; set; }
+        public double TempMin { get; set; }
+        public double TempMax { get; set; }
+        public int Pressure { get; set; }
+        public int humidity { get; set; }
+    }
+
+    public class Wind
+    {
+        public double Speed { get; set; }
+        public int Deg { get; set; }
+    }
+
+    public class Clouds
+    {
+        public int All { get; set; }
+    }
+
+    public class Sys
+    {
+        public int Type { get; set; }
+        public int ID { get; set; }
+        public string Country { get; set; }
+        public int Sunrise { get; set; }
+        public int Sunset { get; set; }
+    }
+}
+
